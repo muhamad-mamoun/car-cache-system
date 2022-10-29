@@ -105,14 +105,17 @@ uint8 UART_receiveByte(void)
 void UART_receiveString(uint8* const a_ptr2string)
 {
 	uint8 counter = 0;
-	do
-	{
-		/* Read the received character and store it in the array */
-		*(a_ptr2string+counter) = UART_receiveByte();
-		counter++;
-	}
+
+	/* Read the received character and store it in the array */
+	*(a_ptr2string+counter) = UART_receiveByte();
+
 	/* Check if the received character is the pre-agreed terminator character */
-	while(UART_receiveByte() != UART_MESSAGE_TERMINATOR);
+	while(*(a_ptr2string+counter) != UART_MESSAGE_TERMINATOR)
+	{
+		counter++;
+		/* Read the next character and store it in the array */
+		*(a_ptr2string+counter) = UART_receiveByte();
+	}
 
 	/* Replace the pre-agreed terminator character with a NULL character */
 	*(a_ptr2string+counter) = '\0';
