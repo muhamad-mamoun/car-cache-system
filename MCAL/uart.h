@@ -16,7 +16,7 @@ Description  : Header file for the UART driver.
                                                < Includes >
 ===========================================================================================================*/
 
-#include "std_types.h"
+#include "../OTHERS/std_types.h"
 
 /*===========================================================================================================
                                 < Definitions and Static Configurations >
@@ -49,6 +49,7 @@ typedef struct
                                          < Functions Prototypes >
 ===========================================================================================================*/
 
+
 /*===========================================================================================================
  * [Function Name] : UART_init
  * [Description]   : Initialize the UART peripheral with specific configurations.
@@ -58,6 +59,7 @@ typedef struct
  ==========================================================================================================*/
 void UART_init(const UART_configurationsType* a_ptr2configuration);
 
+
 /*===========================================================================================================
  * [Function Name] : UART_sendByte
  * [Description]   : Transmit a specific byte to another device.
@@ -65,6 +67,7 @@ void UART_init(const UART_configurationsType* a_ptr2configuration);
  * [return]        : The function returns void.
  ==========================================================================================================*/
 void UART_sendByte(const uint8 a_data);
+
 
 /*===========================================================================================================
  * [Function Name] : UART_sendString
@@ -74,6 +77,7 @@ void UART_sendByte(const uint8 a_data);
  ==========================================================================================================*/
 void UART_sendString(const uint8* a_ptr2data);
 
+
 /*===========================================================================================================
  * [Function Name] : UART_receiveByte
  * [Description]   : Receive a byte from another device.
@@ -81,6 +85,7 @@ void UART_sendString(const uint8* a_ptr2data);
  * [return]        : The function returns the received byte.
  ==========================================================================================================*/
 uint8 UART_receiveByte(void);
+
 
 /*===========================================================================================================
  * [Function Name] : UART_receiveString

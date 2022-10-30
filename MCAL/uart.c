@@ -15,7 +15,7 @@ Description  : Source file for the UART driver.
 
 #include "uart.h"
 #include "gpio.h"
-#include "common_macros.h"
+#include "../OTHERS/common_macros.h"
 #include <avr/io.h>
 
 /*===========================================================================================================
