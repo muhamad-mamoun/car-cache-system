@@ -7,7 +7,7 @@ Description  : Vertical Rotary Car Parking System.
 ===========================================================================================================
 */
 
-#error "The project is not finished yet."
+#warning "The project is not finished yet."
 
 /*===========================================================================================================
                                                < Includes >
