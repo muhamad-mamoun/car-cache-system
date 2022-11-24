@@ -27,7 +27,7 @@ Description  : Header File for all AVR external interrupts driver.
 
 #define EXTERNAL_INTERRUPT_0      (ENABLE)
 #define EXTERNAL_INTERRUPT_1      (ENABLE)
-#define EXTERNAL_INTERRUPT_2      (DISABLE)
+#define EXTERNAL_INTERRUPT_2      (ENABLE)
 
 /*===========================================================================================================
                                        < User-defined Data Types >
