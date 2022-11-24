@@ -16,7 +16,7 @@ Description  : Header file for the LCD driver.
                                                < Includes >
 ===========================================================================================================*/
 
-#include "../OTHERS/std_types.h"
+#include "std_types.h"
 
 /*===========================================================================================================
                                 < Definitions and Static Configurations >
@@ -127,7 +127,7 @@ void LCD_displayStringRowColumn(const uint8* const a_character_Ptr, uint8 a_row,
  * [Arguments]     : <a_data>         -> Indicates to the integer value.
  * [return]        : The function returns void.
  ==========================================================================================================*/
-void LCD_displayInteger(uint32 a_data);
+void LCD_displayInteger(int a_data);
 
 
 /*===========================================================================================================
