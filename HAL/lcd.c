@@ -14,8 +14,8 @@ Description  : Source file for the LCD driver.
 ===========================================================================================================*/
 
 #include "lcd.h"
-#include "gpio.h"
-#include "common_macros.h"
+#include "../MCAL/gpio.h"
+#include "../OTHERS/common_macros.h"
 #include <util/delay.h>
 #include <stdio.h>
 
