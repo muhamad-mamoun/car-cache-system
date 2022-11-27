@@ -134,7 +134,6 @@ void LCD_displayInteger(int a_data);
  * [Function Name] : LCD_clearScrean
  * [Description]   : Clear the screen of the LCD.
  *                   Also this function deletes the DDRAM of the LCD.
- *                   Then, display this string on the LCD.
  * [Arguments]     : The function takes no arguments.
  * [return]        : The function returns void.
  ==========================================================================================================*/
