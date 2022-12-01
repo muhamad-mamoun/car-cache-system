@@ -107,19 +107,20 @@ void TIMER1_CTC_init(const TIMER1_CTC_configurationsType* a_ptr2configurations)
  ==========================================================================================================*/
 void TIMER1_PWM_init(const TIMER1_PWM_configurationsType* a_ptr2configurations)
 {
+	TIMER1_Deinit();                   /* De-Initialize Timer1 to reset the previous configurations. */
+
 	/* Calculate the required PWM frequency and duty-cycle based on the configurations. */
 	uint16 OCR1A_value = (F_CPU/(a_ptr2configurations->frequency*a_ptr2configurations->prescaler_divider))-1;
-	uint16 OCR1B_value = (uint16)((uint32)a_ptr2configurations->duty_cycle*655.35);
+	uint16 OCR1B_value = (uint16)((uint32)a_ptr2configurations->duty_cycle*(OCR1A_value/100.00));
 
-	TIMER1_Deinit();                   /* De-Initialize Timer1 to reset the previous configurations. */
-	TCCR1A = (TCCR1A & 0X3F)|((a_ptr2configurations->OC1A_output_mode)<<6);        /* Set OC1A mode. */
-	TCCR1A = (TCCR1A & 0XCF)|((a_ptr2configurations->OC1B_output_mode)<<4);        /* Set OC1B mode. */
-	TCCR1A |= (1<<WGM10);                                       /* Set Timer1 to Fast PWM mode.      */
-	TCCR1A |= (1<<WGM11);                                       /* Set Timer1 to Fast PWM mode.      */
-	TCCR1B |= (1<<WGM12);                                       /* Set Timer1 to Fast PWM mode.      */
-	TCCR1B |= (1<<WGM13);                                       /* Set Timer1 to Fast PWM mode.      */
 	OCR1A = OCR1A_value;                                        /* Set the required PWM frequency.   */
 	OCR1B = OCR1B_value;                                        /* Set the required PWM duty-cycle.  */
+	TCCR1A |= (1<<WGM10);                                       /* Set Timer1 to Fast PWM mode (15). */
+	TCCR1A |= (1<<WGM11);                                       /* Set Timer1 to Fast PWM mode (15). */
+	TCCR1B |= (1<<WGM12);                                       /* Set Timer1 to Fast PWM mode (15). */
+	TCCR1B |= (1<<WGM13);                                       /* Set Timer1 to Fast PWM mode (15). */
+	TCCR1A = (TCCR1A & 0X3F)|((a_ptr2configurations->OC1A_output_mode)<<6);        /* Set OC1A mode. */
+	TCCR1A = (TCCR1A & 0XCF)|((a_ptr2configurations->OC1B_output_mode)<<4);        /* Set OC1B mode. */
 	TCCR1B = (TCCR1B & 0XF8)|(a_ptr2configurations->prescaler); /* Select the required prescaler.    */
 
 	/* Store the prescaler value to be used in resume function */

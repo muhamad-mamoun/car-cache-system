@@ -16,7 +16,7 @@ Description  : Header file for the AVR Timer1 driver.
                                                < Includes >
 ===========================================================================================================*/
 
-#include "../OTHERS/std_types.h"
+#include "std_types.h"
 
 /*===========================================================================================================
                                        < User-defined Data Types >
@@ -24,7 +24,7 @@ Description  : Header file for the AVR Timer1 driver.
 
 typedef enum
 {
-	NORMAL,TOGGLE,INVERTING,NON_INVERTING
+	NORMAL,TOGGLE,NON_INVERTING,INVERTING
 }TIMER1_compareOutputModeType;
 
 typedef enum
