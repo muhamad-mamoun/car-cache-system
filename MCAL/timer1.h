@@ -47,7 +47,6 @@ typedef struct
 
 typedef struct
 {
-	uint16 initial_value;
 	uint16 compare_value;
 	TIMER1_clockPrescalerType prescaler;
 }TIMER1_CTC_configurationsType;
@@ -56,9 +55,8 @@ typedef struct
 {
 	uint8 duty_cycle;
 	uint32 frequency;
-	uint16 prescaler_divider;              /* The value of the devider (1, 8, 64, 256, or 1024). */
+	uint16 prescaler_divider; /* The devider value (1, 8, 64, 256, or 1024). */
 	TIMER1_clockPrescalerType prescaler;
-	TIMER1_compareOutputModeType OC1A_output_mode;
 	TIMER1_compareOutputModeType OC1B_output_mode;
 }TIMER1_PWM_configurationsType;
 
@@ -103,7 +101,7 @@ void TIMER1_PWM_init(const TIMER1_PWM_configurationsType* a_ptr2configurations);
  * [Arguments]     : <a_ptr2callbackfunc>      -> Pointer points to the call-back function.
  * [return]        : The function returns void.
  ==========================================================================================================*/
-void TIMER1_setCallBack(void(*a_ptr2callbackfunc)(void));
+void TIMER1_setCallBack(void (*a_ptr2callbackfunc)(void));
 
 
 /*===========================================================================================================
