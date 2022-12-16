@@ -22,6 +22,13 @@ Description  : Header file for the LCD driver.
                                 < Definitions and Static Configurations >
 ===========================================================================================================*/
 
+#define LCD_NUM_OF_COLUMNS                    (20)
+
+/* The LCD has only two types: 16-columns and 20-columns. */
+#if ((LCD_NUM_OF_COLUMNS != 16) && (LCD_NUM_OF_COLUMNS != 20))
+#error "Invalid LCD type, The LCD has only two types: 16-columns and 20-columns."
+#endif
+
 #define LCD_DATA_BITS_MODE                    (8u)
 
 /* The LCD has only two modes: 8-bits and 4-bits. */
@@ -43,6 +50,22 @@ Description  : Header file for the LCD driver.
 #define LCD_DATA5_PIN_ID                      (PIN4_ID)
 #define LCD_DATA6_PIN_ID                      (PIN5_ID)
 #define LCD_DATA7_PIN_ID                      (PIN6_ID)
+
+#endif
+
+#if (LCD_NUM_OF_COLUMNS == 16)
+
+#define LCD_1ST_ROW_1ST_CELL_ADDRESS       (0X00)
+#define LCD_2ND_ROW_1ST_CELL_ADDRESS       (0X40)
+#define LCD_3RD_ROW_1ST_CELL_ADDRESS       (0X10)
+#define LCD_4TH_ROW_1ST_CELL_ADDRESS       (0X50)
+
+#elif (LCD_NUM_OF_COLUMNS == 20)
+
+#define LCD_1ST_ROW_1ST_CELL_ADDRESS       (0X00)
+#define LCD_2ND_ROW_1ST_CELL_ADDRESS       (0X40)
+#define LCD_3RD_ROW_1ST_CELL_ADDRESS       (0X14)
+#define LCD_4TH_ROW_1ST_CELL_ADDRESS       (0X54)
 
 #endif
 

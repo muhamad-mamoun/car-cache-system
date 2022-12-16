@@ -174,16 +174,16 @@ void LCD_moveCursor(uint8 a_row, uint8 a_column)
 	switch (a_row)
 	{
 	case 0 :
-		DDRAM_address = a_column + 0X00;
+		DDRAM_address = a_column + LCD_1ST_ROW_1ST_CELL_ADDRESS;
 		break;
 	case 1 :
-		DDRAM_address = a_column + 0X40;
+		DDRAM_address = a_column + LCD_2ND_ROW_1ST_CELL_ADDRESS;
 		break;
 	case 2 :
-		DDRAM_address = a_column + 0X10;
+		DDRAM_address = a_column + LCD_3RD_ROW_1ST_CELL_ADDRESS;
 		break;
 	case 3 :
-		DDRAM_address = a_column + 0X50;
+		DDRAM_address = a_column + LCD_4TH_ROW_1ST_CELL_ADDRESS;
 		break;
 	}
 
