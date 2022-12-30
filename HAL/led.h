@@ -4,7 +4,7 @@ Author       : Mamoun
 Module       : LED
 File Name    : led.h
 Date Created : Nov 15, 2022
-Description  : Header file for the LCD driver.
+Description  : Header file for the LED driver.
 ===========================================================================================================
 */
 
@@ -19,41 +19,38 @@ Description  : Header file for the LCD driver.
 #include "../OTHERS/std_types.h"
 
 /*===========================================================================================================
-                                < Definitions and Static Configurations >
-===========================================================================================================*/
-
-#define LED_PORT_ID               (PORTB_ID)
-#define LED_PIN_ID                (PIN0_ID)
-
-/*===========================================================================================================
                                          < Functions Prototypes >
 ===========================================================================================================*/
 
 
 /*===========================================================================================================
  * [Function Name] : LED_init
- * [Description]   : Initialize the LED by adjusting its pin direction and disable it in the beginning.
- * [Arguments]     : The function takes no arguments.
+ * [Description]   : Initialize a specific LED by: - Adjusting its pin direction.
+ *                                                 - Disable it in the beginning.
+ * [Arguments]     : <a_portID>     -> Indicates to the port number which the LED is in.
+ *                   <a_pinID>      -> Indicates to the pin number.
  * [return]        : The function returns void.
  ==========================================================================================================*/
-void LED_init(void);
+void LED_init(uint8 a_portID, uint8 a_pinID);
 
 
 /*===========================================================================================================
  * [Function Name] : LED_on
- * [Description]   : Turn the LED ON.
- * [Arguments]     : The function takes no arguments.
+ * [Description]   : Turn a specific LED ON.
+ * [Arguments]     : <a_portID>     -> Indicates to the port number which the LED is in.
+ *                   <a_pinID>      -> Indicates to the pin number.
  * [return]        : The function returns void.
  ==========================================================================================================*/
-void LED_on(void);
+void LED_on(uint8 a_portID, uint8 a_pinID);
 
 
 /*===========================================================================================================
  * [Function Name] : LED_off
- * [Description]   : Turn the LED OFF.
- * [Arguments]     : The function takes no arguments.
+ * [Description]   : Turn a specific LED OFF.
+ * [Arguments]     : <a_portID>     -> Indicates to the port number which the LED is in.
+ *                   <a_pinID>      -> Indicates to the pin number.
  * [return]        : The function returns void.
  ==========================================================================================================*/
-void LED_off(void);
+void LED_off(uint8 a_portID, uint8 a_pinID);
 
 #endif /* HAL_LED_H_ */

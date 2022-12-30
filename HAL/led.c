@@ -4,7 +4,7 @@ Author       : Mamoun
 Module       : LED
 File Name    : led.c
 Date Created : Nov 15, 2022
-Description  : Source file for the LCD driver.
+Description  : Source file for the LED driver.
 ===========================================================================================================
 */
 
@@ -22,34 +22,38 @@ Description  : Source file for the LCD driver.
 
 /*===========================================================================================================
  * [Function Name] : LED_init
- * [Description]   : Initialize the LED by adjusting its pin direction and disable it in the beginning.
- * [Arguments]     : The function takes no arguments.
+ * [Description]   : Initialize a specific LED by: - Adjusting its pin direction.
+ *                                                 - Disable it in the beginning.
+ * [Arguments]     : <a_portID>     -> Indicates to the port number which the LED is in.
+ *                   <a_pinID>      -> Indicates to the pin number.
  * [return]        : The function returns void.
  ==========================================================================================================*/
-void LED_init(void)
+void LED_init(uint8 a_portID, uint8 a_pinID)
 {
-	GPIO_setupPinDirection(LED_PORT_ID,LED_PIN_ID,OUTPUT_PIN);
-	GPIO_writePin(LED_PORT_ID,LED_PIN_ID,LOW_PIN);
+	GPIO_setupPinDirection(a_portID,a_pinID,OUTPUT_PIN);     /* Adjust LED pin direction.    */
+	GPIO_writePin(a_portID,a_pinID,LOW_PIN);                 /* Disable it in the beginning. */
 }
 
 /*===========================================================================================================
  * [Function Name] : LED_on
- * [Description]   : Turn the LED ON.
- * [Arguments]     : The function takes no arguments.
+ * [Description]   : Turn a specific LED ON.
+ * [Arguments]     : <a_portID>     -> Indicates to the port number which the LED is in.
+ *                   <a_pinID>      -> Indicates to the pin number.
  * [return]        : The function returns void.
  ==========================================================================================================*/
-void LED_on(void)
+void LED_on(uint8 a_portID, uint8 a_pinID)
 {
-	GPIO_writePin(LED_PORT_ID,LED_PIN_ID,HIGH_PIN);
+	GPIO_writePin(a_portID,a_pinID,HIGH_PIN);                /* Turn the LED ON. */
 }
 
 /*===========================================================================================================
  * [Function Name] : LED_off
- * [Description]   : Turn the LED OFF.
- * [Arguments]     : The function takes no arguments.
+ * [Description]   : Turn a specific LED OFF.
+ * [Arguments]     : <a_portID>     -> Indicates to the port number which the LED is in.
+ *                   <a_pinID>      -> Indicates to the pin number.
  * [return]        : The function returns void.
  ==========================================================================================================*/
-void LED_off(void)
+void LED_off(uint8 a_portID, uint8 a_pinID)
 {
-	GPIO_writePin(LED_PORT_ID,LED_PIN_ID,LOW_PIN);
+	GPIO_writePin(a_portID,a_pinID,LOW_PIN);                /* Turn the LED OFF. */
 }
