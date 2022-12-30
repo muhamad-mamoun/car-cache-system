@@ -55,17 +55,17 @@ Description  : Header file for the LCD driver.
 
 #if (LCD_NUM_OF_COLUMNS == 16)
 
-#define LCD_1ST_ROW_1ST_CELL_ADDRESS       (0X00)
-#define LCD_2ND_ROW_1ST_CELL_ADDRESS       (0X40)
-#define LCD_3RD_ROW_1ST_CELL_ADDRESS       (0X10)
-#define LCD_4TH_ROW_1ST_CELL_ADDRESS       (0X50)
+#define LCD_1ST_ROW_1ST_CELL_ADDRESS          (0X00)
+#define LCD_2ND_ROW_1ST_CELL_ADDRESS          (0X40)
+#define LCD_3RD_ROW_1ST_CELL_ADDRESS          (0X10)
+#define LCD_4TH_ROW_1ST_CELL_ADDRESS          (0X50)
 
 #elif (LCD_NUM_OF_COLUMNS == 20)
 
-#define LCD_1ST_ROW_1ST_CELL_ADDRESS       (0X00)
-#define LCD_2ND_ROW_1ST_CELL_ADDRESS       (0X40)
-#define LCD_3RD_ROW_1ST_CELL_ADDRESS       (0X14)
-#define LCD_4TH_ROW_1ST_CELL_ADDRESS       (0X54)
+#define LCD_1ST_ROW_1ST_CELL_ADDRESS          (0X00)
+#define LCD_2ND_ROW_1ST_CELL_ADDRESS          (0X40)
+#define LCD_3RD_ROW_1ST_CELL_ADDRESS          (0X14)
+#define LCD_4TH_ROW_1ST_CELL_ADDRESS          (0X54)
 
 #endif
 
@@ -151,6 +151,16 @@ void LCD_displayStringRowColumn(const uint8* const a_character_Ptr, uint8 a_row,
  * [return]        : The function returns void.
  ==========================================================================================================*/
 void LCD_displayInteger(int a_data);
+
+
+/*===========================================================================================================
+ * [Function Name] : LCD_displayHEX
+ * [Description]   : Convert a specific decimal byte to HEX.
+ *                   Then, display this HEX on the LCD.
+ * [Arguments]     : <a_decimal_byte>         -> Indicates to the decimal byte.
+ * [return]        : The function returns void.
+ ==========================================================================================================*/
+void LCD_displayHEX(uint8 a_decimal_byte);
 
 
 /*===========================================================================================================
