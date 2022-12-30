@@ -21,6 +21,7 @@ Description  : Source file for the AVR Timer1 driver.
                                            < Global Variables >
 ===========================================================================================================*/
 
+static uint16 g_last_OCR1A_value = 0;
 static TIMER1_clockPrescalerType g_last_prescaler_value = TIMER1_NO_CLOCK;
 static volatile void (*g_ptr2callbackfunc)(void) = NULL_PTR;
 
@@ -120,6 +121,22 @@ void TIMER1_PWM_init(const TIMER1_PWM_configurationsType* a_ptr2configurations)
 
 	/* Store the prescaler value to be used in resume function */
 	g_last_prescaler_value = a_ptr2configurations->prescaler;
+	g_last_OCR1A_value = OCR1A_value;
+}
+
+/*===========================================================================================================
+ * [Function Name] : TIMER1_PWM_setDutyCycle
+ * [Description]   : Set the required PWM duty-cycle.
+ * [Arguments]     : <a_duty_cycle>      -> Indicates to the required duty-cycle percent (0% - 100%).
+ * [return]        : The function returns void.
+ ==========================================================================================================*/
+void TIMER1_PWM_setDutyCycle(uint8 a_duty_cycle)
+{
+	/* Calculate the required duty-cycle based on the configurations. */
+	uint16 OCR1B_value = (uint16)(g_last_OCR1A_value * (a_duty_cycle/100.00));
+
+	/* Set the required PWM duty-cycle.  */
+	OCR1B = OCR1B_value;
 }
 
 /*===========================================================================================================

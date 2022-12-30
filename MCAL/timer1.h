@@ -16,7 +16,7 @@ Description  : Header file for the AVR Timer1 driver.
                                                < Includes >
 ===========================================================================================================*/
 
-#include "std_types.h"
+#include "../OTHERS/std_types.h"
 
 /*===========================================================================================================
                                        < User-defined Data Types >
@@ -93,6 +93,15 @@ void TIMER1_CTC_init(const TIMER1_CTC_configurationsType* a_ptr2configurations);
  * [return]        : The function returns void.
  ==========================================================================================================*/
 void TIMER1_PWM_init(const TIMER1_PWM_configurationsType* a_ptr2configurations);
+
+
+/*===========================================================================================================
+ * [Function Name] : TIMER1_PWM_setDutyCycle
+ * [Description]   : Set the required PWM duty-cycle.
+ * [Arguments]     : <a_duty_cycle>      -> Indicates to the required duty-cycle percent (0% - 100%).
+ * [return]        : The function returns void.
+ ==========================================================================================================*/
+void TIMER1_PWM_setDutyCycle(uint8 a_duty_cycle);
 
 
 /*===========================================================================================================
