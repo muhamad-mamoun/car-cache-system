@@ -16,7 +16,7 @@ Description  : Header file for the MG90S Servo motor driver.
                                                < Includes >
 ===========================================================================================================*/
 
-#include "std_types.h"
+#include "../OTHERS/std_types.h"
 
 /*===========================================================================================================
                                 < Definitions and Static Configurations >

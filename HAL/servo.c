@@ -13,9 +13,9 @@ Description  : Source file for the MG90S Servo motor driver.
                                                < Includes >
 ===========================================================================================================*/
 
-#include "gpio.h"
 #include "servo.h"
-#include "timer1.h"
+#include "../MCAL/gpio.h"
+#include "../MCAL/timer1.h"
 
 /*===========================================================================================================
                                            < Global Variables >
