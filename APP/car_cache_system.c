@@ -19,7 +19,7 @@ Description  : Vertical Rotary Car Parking System.
                                            < Global Variables >
 ===========================================================================================================*/
 
-
+uint64 g_steps_to_home = 0;
 
 /*===========================================================================================================
                                       < Private Functions Prototypes >
@@ -91,7 +91,8 @@ void SYSTEM_retrieveCar(void)
 
 void SYSTEM_returnHome(void)
 {
-
+	// assure that the gate is closed.
+	STEPPER_rotate(a_direction,g_steps_to_home);
 }
 
 
