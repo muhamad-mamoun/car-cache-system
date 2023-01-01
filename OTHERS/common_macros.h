@@ -12,6 +12,12 @@ Description  : Common macros used in the code.
 #ifndef COMMON_MACROS_H_
 #define COMMON_MACROS_H_
 
+/* Enable the AVR global interrupt. */
+#define ENABLE_GLOBAL_INT() SET_BIT(SREG,7)
+
+/* Disable the AVR global interrupt. */
+#define DISABLE_GLOBAL_INT() CLEAR_BIT(SREG,7)
+
 /* Set a certain bit in any register */
 #define SET_BIT(REG,BIT) (REG = (REG) | (1<<BIT))
 

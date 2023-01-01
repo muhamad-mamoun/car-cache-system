@@ -47,9 +47,20 @@ void STEPPER_init(void)
 void STEPPER_rotate(STEPPER_directionType a_direction, uint32 a_steps)
 {
 	uint32 steps_counter;
-	float64 variable_delay;
+//	float64 variable_delay;
 
 	GPIO_writePin(STEPPER_DIRECTION_PORT_ID,STEPPER_DIRECTION_PIN_ID,a_direction);
+	for(steps_counter = 0; steps_counter < a_steps; steps_counter++)
+	{
+		GPIO_writePin(STEPPER_STEPS_PORT_ID,STEPPER_STEPS_PIN_ID,HIGH_PIN);
+		_delay_ms(CONSTANT_SPEED_HIGH_DELAY);
+		GPIO_writePin(STEPPER_STEPS_PORT_ID,STEPPER_STEPS_PIN_ID,LOW_PIN);
+		_delay_ms(CONSTANT_SPEED_LOW_DELAY);
+	}
+
+	/*======================================================================================================
+	                           < Drive the motor with a smooth start and stop. >
+	========================================================================================================
 
 	for(steps_counter = 0, variable_delay = 28.5; steps_counter < ACCELERATION_STEPS; steps_counter++, variable_delay-=0.003)
 	{
@@ -74,4 +85,5 @@ void STEPPER_rotate(STEPPER_directionType a_direction, uint32 a_steps)
 		GPIO_writePin(STEPPER_STEPS_PORT_ID,STEPPER_STEPS_PIN_ID,LOW_PIN);
 		_delay_ms(variable_delay);
 	}
+	======================================================================================================*/
 }

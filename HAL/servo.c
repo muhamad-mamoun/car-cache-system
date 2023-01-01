@@ -21,7 +21,7 @@ Description  : Source file for the MG90S Servo motor driver.
                                            < Global Variables >
 ===========================================================================================================*/
 
-static TIMER1_PWM_configurationsType g_PWM_configurations = {0,50,256,TIMER1_FCPU_256,NON_INVERTING};
+static TIMER1_PWM_configurationsType g_PWM_configurations = {0,50,256,TIMER1_FCPU_256,TIMER1_NON_INVERTING};
 
 /*===========================================================================================================
                                           < Functions Definitions >

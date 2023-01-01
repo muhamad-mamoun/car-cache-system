@@ -15,7 +15,7 @@ Description  : Source file for the AVR ICU driver.
 
 #include "icu.h"
 #include "gpio.h"
-#include "common_macros.h"
+#include "../OTHERS/common_macros.h"
 #include <avr/interrupt.h>
 #include <avr/io.h>
 

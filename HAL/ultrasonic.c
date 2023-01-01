@@ -13,10 +13,10 @@ Description  : Source file for the ultrasonic sensor driver.
                                                < Includes >
 ===========================================================================================================*/
 
-#include "icu.h"
-#include "gpio.h"
 #include "ultrasonic.h"
-#include "common_macros.h"
+#include "../MCAL/icu.h"
+#include "../MCAL/gpio.h"
+#include "../OTHERS/common_macros.h"
 #include <util/delay.h>
 
 /*===========================================================================================================
