@@ -24,15 +24,15 @@ Description  : Source File for all AVR external interrupts driver.
 ===========================================================================================================*/
 
 #if (EXTERNAL_INTERRUPT_0 == ENABLE)
-void (*g_INT0_ptr2callBackFunction)(void) = NULL_PTR;
+static volatile void (*g_INT0_ptr2callBackFunction)(void) = NULL_PTR;
 #endif
 
 #if (EXTERNAL_INTERRUPT_1 == ENABLE)
-void (*g_INT1_ptr2callBackFunction)(void) = NULL_PTR;
+static volatile void (*g_INT1_ptr2callBackFunction)(void) = NULL_PTR;
 #endif
 
 #if (EXTERNAL_INTERRUPT_2 == ENABLE)
-void (*g_INT2_ptr2callBackFunction)(void) = NULL_PTR;
+static volatile void (*g_INT2_ptr2callBackFunction)(void) = NULL_PTR;
 #endif
 
 /*===========================================================================================================
