@@ -48,7 +48,19 @@ Description  : Vertical Rotary Car Parking System.
                                        < User-defined Data Types >
 ===========================================================================================================*/
 
+typedef enum
+{
+	BUSY_SPACE,EMPTY_SPACE
+}SYSTEM_parkingSpaceStateType;
 
+typedef struct
+{
+	uint8 space_id;
+	sint32 rfid_card_id;
+	uint64 steps_to_gate;
+	STEPPER_directionType direction_to_gate;
+	SYSTEM_parkingSpaceStateType available_flag;
+}SYSTEM_parkingSpaceData;
 
 /*===========================================================================================================
                                          < Function-like Macros >
