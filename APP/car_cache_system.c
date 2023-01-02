@@ -114,8 +114,31 @@ void SYSTEM_setEnterCarEvent(void)
 void SYSTEM_enterCar(void)
 {
 	// Event Handling...
+	uint8 parking_space_id;
+	parking_space_id = SYSTEM_findEmptyParkingSpace();
+	if(parking_space_id == 0)
+	{
+		// No available spaces
+	}
+	else
+	{
+		// rotate the garage, ...
+	}
 	SYSTEM_updateparkingSpaceData(,);
 	g_ptr2eventHandlingFunction = NULL_PTR;
+}
+
+uint8 SYSTEM_findEmptyParkingSpace(void)
+{
+	uint8 parking_space_id = 0;
+	for(uint8 counter = 0; counter < SYSTEM_PARKING_SPACES; counter++)
+	{
+		if((g_parking_spaces + counter)->available_flag == EMPTY_SPACE)
+		{
+			parking_space_id = (g_parking_spaces + counter)->space_id;
+		}
+	}
+	return parking_space_id;
 }
 
 void SYSTEM_setRetrieveCarEvent(void)
