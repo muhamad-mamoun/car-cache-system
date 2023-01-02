@@ -101,7 +101,7 @@ void SYSTEM_retrieveParkingSpaceData(void)
 	}
 }
 
-void SYSTEM_updateparkingSpaceData(uint8 a_space_id, SYSTEM_parkingSpaceStateType a_available_flag)
+void SYSTEM_updateParkingSpaceData(uint8 a_space_id, SYSTEM_parkingSpaceStateType a_available_flag)
 {
 	MEEPROM_voidWrite(PARKING_SPACES_DATA_ADDRESS + a_space_id - 1,a_available_flag);
 }
