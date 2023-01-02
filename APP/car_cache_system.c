@@ -22,12 +22,12 @@ Description  : Vertical Rotary Car Parking System.
 static volatile void (*g_ptr2eventHandlingFunction)(void) = NULL_PTR;
 
 uint64 g_steps_to_home = 0;
-SYSTEM_parkingSpaceData g_parking_spaces[6] = {{1,12689,0,CLOCKWISE,EMPTY_SPACE},
-		                                       {2,0,0,COUNTERCLOCKWISE,EMPTY_SPACE},
-									    	   {3,0,0,CLOCKWISE,EMPTY_SPACE},
-											   {4,0,0,COUNTERCLOCKWISE,EMPTY_SPACE},
-											   {5,0,0,CLOCKWISE,EMPTY_SPACE},
-											   {6,0,0,COUNTERCLOCKWISE,EMPTY_SPACE}};
+SYSTEM_parkingSpaceData g_parking_spaces[SYSTEM_PARKING_SPACES] = {{1,12689,0,CLOCKWISE,EMPTY_SPACE},
+		                                                           {2,0,0,COUNTERCLOCKWISE,EMPTY_SPACE},
+									                         	   {3,0,0,CLOCKWISE,EMPTY_SPACE},
+											                       {4,0,0,COUNTERCLOCKWISE,EMPTY_SPACE},
+											                       {5,0,0,CLOCKWISE,EMPTY_SPACE},
+											                       {6,0,0,COUNTERCLOCKWISE,EMPTY_SPACE}};
 
 /*===========================================================================================================
                                       < Private Functions Prototypes >
@@ -75,14 +75,14 @@ void SYSTEM_init(void)
 	LED_init(PORTC_ID,PIN7_ID);
 
 	MEEPROM_voidInit();
-	// read the data from eeprom.
+	SYSTEM_retrieveParkingSpaceData();
 
 	INT0_init(INT0_RISING_EDGE);
 	INT1_init(INT1_RISING_EDGE);
 	INT2_init(INT2_RISING_EDGE);
-	INT0_setCallBack(SYSTEM_enterCarSetCallBack);
-	INT1_setCallBack(SYSTEM_retrieveCarSetCallBack);
-	INT2_setCallBack(SYSTEM_returnHomeSetCallBack);
+	INT0_setCallBack(SYSTEM_setEnterCarEvent);
+	INT1_setCallBack(SYSTEM_setRetrieveCarEvent);
+	INT2_setCallBack(SYSTEM_setReturnHomeEvent);
 
 	_delay_ms(3000);
 	LCD_clearScrean();
@@ -93,7 +93,20 @@ void SYSTEM_init(void)
 	ENABLE_GLOBAL_INT();
 }
 
-void SYSTEM_enterCarSetCallBack(void)
+void SYSTEM_retrieveParkingSpaceData(void)
+{
+	for(uint8 counter = 0; counter < SYSTEM_PARKING_SPACES; counter++)
+	{
+		(g_parking_spaces + counter)->available_flag = MEEPROM_u8Read(PARKING_SPACES_DATA_ADDRESS + counter);
+	}
+}
+
+void SYSTEM_updateparkingSpaceData(uint8 a_space_id, SYSTEM_parkingSpaceStateType a_available_flag)
+{
+	MEEPROM_voidWrite(PARKING_SPACES_DATA_ADDRESS + a_space_id - 1,a_available_flag);
+}
+
+void SYSTEM_setEnterCarEvent(void)
 {
 	g_ptr2eventHandlingFunction = SYSTEM_enterCar;
 }
@@ -101,10 +114,11 @@ void SYSTEM_enterCarSetCallBack(void)
 void SYSTEM_enterCar(void)
 {
 	// Event Handling...
+	SYSTEM_updateparkingSpaceData(,);
 	g_ptr2eventHandlingFunction = NULL_PTR;
 }
 
-void SYSTEM_retrieveCarSetCallBack(void)
+void SYSTEM_setRetrieveCarEvent(void)
 {
 	g_ptr2eventHandlingFunction = SYSTEM_retrieveCar;
 }
@@ -112,18 +126,20 @@ void SYSTEM_retrieveCarSetCallBack(void)
 void SYSTEM_retrieveCar(void)
 {
 	// Event Handling...
+	SYSTEM_updateparkingSpaceData(,);
 	g_ptr2eventHandlingFunction = NULL_PTR;
 }
 
-void SYSTEM_returnHomeSetCallBack(void)
+void SYSTEM_setReturnHomeEvent(void)
 {
+	/* Set the Return Home event as the current event. */
 	g_ptr2eventHandlingFunction = SYSTEM_returnHome;
 }
 
 void SYSTEM_returnHome(void)
 {
 	// assure that the gate is closed.
-	STEPPER_rotate(a_direction,g_steps_to_home);
+//	STEPPER_rotate(a_direction,g_steps_to_home);
 	// Event Handling...
 	g_ptr2eventHandlingFunction = NULL_PTR;
 }

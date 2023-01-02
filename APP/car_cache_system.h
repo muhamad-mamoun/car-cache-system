@@ -36,7 +36,8 @@ Description  : Vertical Rotary Car Parking System.
                                 < Definitions and Static Configurations >
 ===========================================================================================================*/
 
-
+#define SYSTEM_PARKING_SPACES                    (6)
+#define PARKING_SPACES_DATA_ADDRESS              (0x000)
 
 /*===========================================================================================================
                                        < Shared Global Variables >
@@ -50,7 +51,7 @@ Description  : Vertical Rotary Car Parking System.
 
 typedef enum
 {
-	BUSY_SPACE,EMPTY_SPACE
+	EMPTY_SPACE,BUSY_SPACE
 }SYSTEM_parkingSpaceStateType;
 
 typedef struct
@@ -71,6 +72,30 @@ typedef struct
 /*===========================================================================================================
                                          < Functions Prototypes >
 ===========================================================================================================*/
+
+
+
+
+
+
+void SYSTEM_init(void);
+
+void SYSTEM_setEnterCarEvent(void);
+
+void SYSTEM_enterCar(void);
+
+void SYSTEM_setRetrieveCarEvent(void);
+
+void SYSTEM_retrieveCar(void);
+
+void SYSTEM_setReturnHomeEvent(void);
+
+void SYSTEM_returnHome(void);
+
+
+
+
+
 
 
 
