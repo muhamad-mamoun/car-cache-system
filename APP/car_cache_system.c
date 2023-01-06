@@ -84,7 +84,7 @@ void SYSTEM_init(void)
 	INT1_setCallBack(SYSTEM_setRetrieveCarEvent);
 	INT2_setCallBack(SYSTEM_setReturnHomeEvent);
 
-	_delay_ms(3000);
+	_delay_ms(2000);
 	LCD_clearScrean();
 	LCD_displayStringRowColumn("Car-Cache System",0,2);
 	LCD_displayStringRowColumn("» Enter a car.",2,0);
@@ -119,18 +119,31 @@ void SYSTEM_enterCar(void)
 	if(parking_space_id == 0)
 	{
 		// No available spaces
+		LCD_displayStringRowColumn("Sorry!",2,7);
+		LCD_displayStringRowColumn("No Empty Spaces!",2,2);
 	}
 	else
 	{
 		// rotate the garage, ...
+		// 1- rotate motor
+		// 2- open the gate
+		SYSTEM_openGate();
+		// 3- parking assistant
+		// 4- user detection using IR
+		while(IR_checkState() == IR_RECEIVING);
+		// 5- waiting min, close the gate, and return home
+		SYSTEM_closeGate();
+		// 6- update space data (array & EEPROM)
+		SYSTEM_updateparkingSpaceData(parking_space_id,BUSY_SPACE);
+		(g_parking_spaces + parking_space_id - 1)->available_flag = BUSY_SPACE;
 	}
-	SYSTEM_updateparkingSpaceData(,);
 	g_ptr2eventHandlingFunction = NULL_PTR;
 }
 
 uint8 SYSTEM_findEmptyParkingSpace(void)
 {
 	uint8 parking_space_id = 0;
+
 	for(uint8 counter = 0; counter < SYSTEM_PARKING_SPACES; counter++)
 	{
 		if((g_parking_spaces + counter)->available_flag == EMPTY_SPACE)
@@ -138,6 +151,7 @@ uint8 SYSTEM_findEmptyParkingSpace(void)
 			parking_space_id = (g_parking_spaces + counter)->space_id;
 		}
 	}
+
 	return parking_space_id;
 }
 
@@ -149,6 +163,12 @@ void SYSTEM_setRetrieveCarEvent(void)
 void SYSTEM_retrieveCar(void)
 {
 	// Event Handling...
+	// 1- get card id
+	// 2- search for this id
+	// 3- rotate motor
+	// 4- open gate
+	// 5- ultrasonic and timer to close the gate
+	// 6- go to home position
 	SYSTEM_updateparkingSpaceData(,);
 	g_ptr2eventHandlingFunction = NULL_PTR;
 }
@@ -167,6 +187,14 @@ void SYSTEM_returnHome(void)
 	g_ptr2eventHandlingFunction = NULL_PTR;
 }
 
+void SYSTEM_openGate(void)
+{
+	SERVO_init();
+	SERVO_setAngle(90);
+}
 
-
-
+void SYSTEM_closeGate(void)
+{
+	SERVO_init();
+	SERVO_setAngle(0);
+}
