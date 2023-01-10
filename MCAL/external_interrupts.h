@@ -62,7 +62,7 @@ typedef enum
 #if (EXTERNAL_INTERRUPT_0 == ENABLE)
 /*===========================================================================================================
  * [Function Name] : INT0_init
- * [Description]   : Initialize external interrupt 0 with specific configurations.
+ * [Description]   : Initialize the external interrupt 0 with specific configurations.
  * [Arguments]     : <a_edgeType>      -> Indicates to the required edge type to be detected.
  * [return]        : The function returns void.
  ==========================================================================================================*/
@@ -91,7 +91,7 @@ void INT0_setCallBack(void(*a_ptr2func)(void));
 #if (EXTERNAL_INTERRUPT_1 == ENABLE)
 /*===========================================================================================================
  * [Function Name] : INT1_init
- * [Description]   : Initialize external interrupt 1 with specific configurations.
+ * [Description]   : Initialize the external interrupt 1 with specific configurations.
  * [Arguments]     : <a_edgeType>      -> Indicates to the required edge type to be detected.
  * [return]        : The function returns void.
  ==========================================================================================================*/
@@ -120,7 +120,7 @@ void INT1_setCallBack(void(*a_ptr2func)(void));
 #if (EXTERNAL_INTERRUPT_2 == ENABLE)
 /*===========================================================================================================
  * [Function Name] : INT2_init
- * [Description]   : Initialize external interrupt 2 with specific configurations.
+ * [Description]   : Initialize the external interrupt 2 with specific configurations.
  * [Arguments]     : <a_edgeType>      -> Indicates to the required edge type to be detected.
  * [return]        : The function returns void.
  ==========================================================================================================*/
