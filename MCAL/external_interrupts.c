@@ -87,6 +87,17 @@ void INT0_init(INT0_senseControlType a_edgeType)
 }
 
 /*===========================================================================================================
+ * [Function Name] : INT0_disable
+ * [Description]   : Disable the external interrupt 0.
+ * [Arguments]     : The function takes no arguments.
+ * [return]        : The function returns void.
+ ==========================================================================================================*/
+void INT0_disable(void)
+{
+	CLEAR_BIT(GICR,INT0);                      /* Disable External Interrupt 0 */
+}
+
+/*===========================================================================================================
  * [Function Name] : INT0_setCallBack
  * [Description]   : Save the address of the Call back function in a global variable.
  * [Arguments]     : <a_ptr2func>      -> Pointer points to the call-back function.
@@ -109,7 +120,18 @@ void INT0_setCallBack(void(*a_ptr2func)(void))
 void INT1_init(INT1_senseControlType a_edgeType)
 {
 	MCUCR = (MCUCR&0XF3)|(a_edgeType<<2);      /* Set INT0 To Trigger Interrupt With Falling Edge */
-	SET_BIT(GICR,INT1);                        /* Enable External Interrupt 0 */
+	SET_BIT(GICR,INT1);                        /* Enable External Interrupt 1 */
+}
+
+/*===========================================================================================================
+ * [Function Name] : INT1_disable
+ * [Description]   : Disable the external interrupt 1.
+ * [Arguments]     : The function takes no arguments.
+ * [return]        : The function returns void.
+ ==========================================================================================================*/
+void INT1_disable(void)
+{
+	CLEAR_BIT(GICR,INT1);                      /* Disable External Interrupt 1 */
 }
 
 /*===========================================================================================================
@@ -135,7 +157,18 @@ void INT1_setCallBack(void(*a_ptr2func)(void))
 void INT2_init(INT2_senseControlType a_edgeType)
 {
 	WRITE_BIT(MCUCR,ISC2,a_edgeType);          /* Set INT0 To Trigger Interrupt With Falling Edge */
-	SET_BIT(GICR,INT2);                        /* Enable External Interrupt 0 */
+	SET_BIT(GICR,INT2);                        /* Enable External Interrupt 2 */
+}
+
+/*===========================================================================================================
+ * [Function Name] : INT2_disable
+ * [Description]   : Disable the external interrupt 2.
+ * [Arguments]     : The function takes no arguments.
+ * [return]        : The function returns void.
+ ==========================================================================================================*/
+void INT2_disable(void)
+{
+	CLEAR_BIT(GICR,INT2);                      /* Disable External Interrupt 2 */
 }
 
 /*===========================================================================================================

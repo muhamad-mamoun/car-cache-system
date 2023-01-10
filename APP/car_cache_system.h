@@ -20,6 +20,7 @@ Description  : Vertical Rotary Car Parking System.
 #include "../HAL/lcd.h"
 #include "../HAL/rfid.h"
 #include "../HAL/servo.h"
+#include "../HAL/laser.h"
 #include "../HAL/buzzer.h"
 #include "../HAL/ultrasonic.h"
 #include "../HAL/stepper_motor.h"
@@ -38,6 +39,11 @@ Description  : Vertical Rotary Car Parking System.
 
 #define SYSTEM_PARKING_SPACES                    (6)
 #define PARKING_SPACES_DATA_ADDRESS              (0x000)
+
+#define PARKING_ASSISTANT_LEDS_PORT_ID           (PORTB_ID)
+#define PARKING_ASSISTANT_RED_LED_PIN_ID         (PIN7_ID)
+#define PARKING_ASSISTANT_GREEN_LED_PIN_ID       (PIN6_ID)
+#define PARKING_ASSISTANT_SAFE_DISTANCE          (10)
 
 /*===========================================================================================================
                                        < Shared Global Variables >

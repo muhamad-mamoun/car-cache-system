@@ -70,6 +70,15 @@ void INT0_init(INT0_senseControlType a_edgeType);
 
 
 /*===========================================================================================================
+ * [Function Name] : INT0_disable
+ * [Description]   : Disable the external interrupt 0.
+ * [Arguments]     : The function takes no arguments.
+ * [return]        : The function returns void.
+ ==========================================================================================================*/
+void INT0_disable(void);
+
+
+/*===========================================================================================================
  * [Function Name] : INT0_setCallBack
  * [Description]   : Save the address of the Call back function in a global variable.
  * [Arguments]     : <a_ptr2func>      -> Pointer points to the call-back function.
@@ -90,6 +99,15 @@ void INT1_init(INT1_senseControlType a_edgeType);
 
 
 /*===========================================================================================================
+ * [Function Name] : INT1_disable
+ * [Description]   : Disable the external interrupt 1.
+ * [Arguments]     : The function takes no arguments.
+ * [return]        : The function returns void.
+ ==========================================================================================================*/
+void INT1_disable(void);
+
+
+/*===========================================================================================================
  * [Function Name] : INT1_setCallBack
  * [Description]   : Save the address of the Call back function in a global variable.
  * [Arguments]     : <a_ptr2func>      -> Pointer points to the call-back function.
@@ -107,6 +125,15 @@ void INT1_setCallBack(void(*a_ptr2func)(void));
  * [return]        : The function returns void.
  ==========================================================================================================*/
 void INT2_init(INT2_senseControlType a_edgeType);
+
+
+/*===========================================================================================================
+ * [Function Name] : INT2_disable
+ * [Description]   : Disable the external interrupt 2.
+ * [Arguments]     : The function takes no arguments.
+ * [return]        : The function returns void.
+ ==========================================================================================================*/
+void INT2_disable(void);
 
 
 /*===========================================================================================================

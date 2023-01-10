@@ -20,7 +20,7 @@ Description  : Vertical Rotary Car Parking System.
 ===========================================================================================================*/
 
 static volatile void (*g_ptr2eventHandlingFunction)(void) = NULL_PTR;
-
+uint8 g_timer_minutes_counter = 0;
 uint64 g_steps_to_home = 0;
 SYSTEM_parkingSpaceData g_parking_spaces[SYSTEM_PARKING_SPACES] = {{1,12689,0,CLOCKWISE,EMPTY_SPACE},
 		                                                           {2,0,0,COUNTERCLOCKWISE,EMPTY_SPACE},
@@ -66,6 +66,7 @@ void SYSTEM_init(void)
 
 	IR_init();
 	RFID_init();
+	LASER_init();
 	BUZZER_init();
 	STEPPER_init();
 
@@ -108,30 +109,54 @@ void SYSTEM_updateParkingSpaceData(uint8 a_space_id, SYSTEM_parkingSpaceStateTyp
 
 void SYSTEM_setEnterCarEvent(void)
 {
+	/* Set the Enter Car event as the current event. */
 	g_ptr2eventHandlingFunction = SYSTEM_enterCar;
 }
 
 void SYSTEM_enterCar(void)
 {
+	/*==========================================================================
+	 *
+	 *
+	 *
+	 *
+	 *
+	 =========================================================================*/
 	// Event Handling...
 	uint8 parking_space_id;
 	parking_space_id = SYSTEM_findEmptyParkingSpace();
 	if(parking_space_id == 0)
 	{
 		// No available spaces
+		LCD_clearScrean();
+		LCD_displayStringRowColumn("Car-Cache System",0,2);
 		LCD_displayStringRowColumn("Sorry!",2,7);
-		LCD_displayStringRowColumn("No Empty Spaces!",2,2);
+		LCD_displayStringRowColumn("No Empty Spaces!",3,2);
 	}
 	else
 	{
-		// rotate the garage, ...
+		LCD_clearScrean();
+		LCD_displayStringRowColumn("Car-Cache System",0,2);
+		LCD_displayStringRowColumn("Wait for your space.",2,0);
 		// 1- rotate motor
+		SYSTEM_rotateGarage(parking_space_id);
+
+		LCD_clearScrean();
+		LCD_displayStringRowColumn("Car-Cache System",0,2);
+		LCD_displayStringRowColumn("You Are Welcome.",2,2);
+
 		// 2- open the gate
 		SYSTEM_openGate();
 		// 3- parking assistant
+		SYSTEM_parkingAssistant();
 		// 4- user detection using IR
+		LASER_on();
+		_delay_ms(100);
 		while(IR_checkState() == IR_RECEIVING);
 		// 5- waiting min, close the gate, and return home
+		TIMER0_CTC_init(a_ptr2configurations);
+		TIMER0_setCallBack(a_ptr2callbackfunc);
+
 		SYSTEM_closeGate();
 		// 6- update space data (array & EEPROM)
 		SYSTEM_updateparkingSpaceData(parking_space_id,BUSY_SPACE);
@@ -155,13 +180,49 @@ uint8 SYSTEM_findEmptyParkingSpace(void)
 	return parking_space_id;
 }
 
+void SYSTEM_rotateGarage(uint8 a_space_id)
+{
+	uint64 rotation_steps = *(g_parking_spaces + a_space_id - 1)->steps_to_gate;
+	STEPPER_directionType rotation_direction = *(g_parking_spaces + a_space_id - 1)->direction_to_gate;
+
+	DISABLE_GLOBAL_INT();
+	STEPPER_rotate(rotation_direction,rotation_steps);
+	ENABLE_GLOBAL_INT();
+}
+
+void SYSTEM_parkingAssistant(void)
+{
+	uint16 distance;
+
+	ULTRASONIC_init();
+	LED_off(PARKING_ASSISTANT_LEDS_PORT_ID,PARKING_ASSISTANT_GREEN_LED_PIN_ID);
+	LED_on(PARKING_ASSISTANT_GREEN_LED_PIN_ID,PARKING_ASSISTANT_RED_LED_PIN_ID);
+
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!! NOT IDEAL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	do
+	{
+		distance = ULTRASONIC_readDistance();
+	}while(distance > PARKING_ASSISTANT_SAFE_DISTANCE);
+
+	LED_off(PARKING_ASSISTANT_GREEN_LED_PIN_ID,PARKING_ASSISTANT_RED_LED_PIN_ID);
+	LED_on(PARKING_ASSISTANT_LEDS_PORT_ID,PARKING_ASSISTANT_GREEN_LED_PIN_ID);
+}
+
 void SYSTEM_setRetrieveCarEvent(void)
 {
+	/* Set the Retrieve Car event as the current event. */
 	g_ptr2eventHandlingFunction = SYSTEM_retrieveCar;
 }
 
 void SYSTEM_retrieveCar(void)
 {
+	/*==========================================================================
+	 *
+	 *
+	 *
+	 *
+	 *
+	 =========================================================================*/
 	// Event Handling...
 	// 1- get card id
 	// 2- search for this id
