@@ -60,6 +60,11 @@ typedef enum
 	EMPTY_SPACE,BUSY_SPACE
 }SYSTEM_parkingSpaceStateType;
 
+typedef enum
+{
+	GATE_CLOSED,GATE_OPEN
+}SYSTEM_gateStateType;
+
 typedef struct
 {
 	uint8 space_id;
@@ -67,7 +72,14 @@ typedef struct
 	uint64 steps_to_gate;
 	STEPPER_directionType direction_to_gate;
 	SYSTEM_parkingSpaceStateType available_flag;
-}SYSTEM_parkingSpaceData;
+}SYSTEM_parkingSpaceDataType;
+
+typedef struct
+{
+	uint8 space_id;
+	uint64 steps_to_gate;
+	STEPPER_directionType direction_to_gate;
+}SYSTEM_returnHomeDataType;
 
 /*===========================================================================================================
                                          < Function-like Macros >

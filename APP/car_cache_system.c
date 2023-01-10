@@ -19,15 +19,19 @@ Description  : Vertical Rotary Car Parking System.
                                            < Global Variables >
 ===========================================================================================================*/
 
+SYSTEM_gateStateType g_last_gate_state = GATE_CLOSED;
 static volatile void (*g_ptr2eventHandlingFunction)(void) = NULL_PTR;
 uint8 g_timer_minutes_counter = 0;
 uint64 g_steps_to_home = 0;
-SYSTEM_parkingSpaceData g_parking_spaces[SYSTEM_PARKING_SPACES] = {{1,12689,0,CLOCKWISE,EMPTY_SPACE},
+SYSTEM_parkingSpaceDataType g_parking_spaces[SYSTEM_PARKING_SPACES] = {{1,12689,0,CLOCKWISE,EMPTY_SPACE},
 		                                                           {2,0,0,COUNTERCLOCKWISE,EMPTY_SPACE},
 									                         	   {3,0,0,CLOCKWISE,EMPTY_SPACE},
 											                       {4,0,0,COUNTERCLOCKWISE,EMPTY_SPACE},
 											                       {5,0,0,CLOCKWISE,EMPTY_SPACE},
 											                       {6,0,0,COUNTERCLOCKWISE,EMPTY_SPACE}};
+
+SYSTEM_returnHomeDataType g_way_to_home = {0,0,CLOCKWISE};
+
 
 /*===========================================================================================================
                                       < Private Functions Prototypes >
@@ -168,15 +172,14 @@ void SYSTEM_enterCar(void)
 uint8 SYSTEM_findEmptyParkingSpace(void)
 {
 	uint8 parking_space_id = 0;
-
 	for(uint8 counter = 0; counter < SYSTEM_PARKING_SPACES; counter++)
 	{
 		if((g_parking_spaces + counter)->available_flag == EMPTY_SPACE)
 		{
 			parking_space_id = (g_parking_spaces + counter)->space_id;
+			break;
 		}
 	}
-
 	return parking_space_id;
 }
 
@@ -223,15 +226,47 @@ void SYSTEM_retrieveCar(void)
 	 *
 	 *
 	 =========================================================================*/
+	uint8 parking_space_id;
+	uint32 scanned_card_id;
 	// Event Handling...
 	// 1- get card id
+	// user interface message here ...
+	scanned_card_id = RFID_readCard();
+	// user interface message here ...
 	// 2- search for this id
-	// 3- rotate motor
-	// 4- open gate
-	// 5- ultrasonic and timer to close the gate
-	// 6- go to home position
-	SYSTEM_updateparkingSpaceData(,);
+	parking_space_id = SYSTEM_findThisParkingSpace(scanned_card_id);
+	if(parking_space_id == 0)
+	{
+		// user interface message here ...
+	}
+	else
+	{
+		// 3- rotate motor
+		SYSTEM_rotateGarage(parking_space_id);
+		// 4- open gate
+		SYSTEM_openGate();
+		// 5- ultrasonic and timer to close the gate
+		// .....
+		SYSTEM_closeGate();
+		// 6- go to home position
+		SYSTEM_updateparkingSpaceData(parking_space_id,EMPTY_SPACE);
+		(g_parking_spaces + parking_space_id - 1)->available_flag = EMPTY_SPACE;
+	}
 	g_ptr2eventHandlingFunction = NULL_PTR;
+}
+
+uint8 SYSTEM_findThisParkingSpace(uint32 a_card_id)
+{
+	uint8 parking_space_id = 0;
+	for(uint8 counter = 0; counter < SYSTEM_PARKING_SPACES; counter++)
+	{
+		if((g_parking_spaces + counter)->rfid_card_id == a_card_id)
+		{
+			parking_space_id = (g_parking_spaces + counter)->space_id;
+			break;
+		}
+	}
+	return parking_space_id;
 }
 
 void SYSTEM_setReturnHomeEvent(void)
@@ -243,7 +278,13 @@ void SYSTEM_setReturnHomeEvent(void)
 void SYSTEM_returnHome(void)
 {
 	// assure that the gate is closed.
-//	STEPPER_rotate(a_direction,g_steps_to_home);
+	if(g_last_gate_state == GATE_OPEN)
+	{
+		SYSTEM_closeGate();
+	}
+	// reminder : you toggled the direction here ..
+	STEPPER_rotate(g_way_to_home.direction_to_gate ^ 1,g_way_to_home.steps_to_gate);
+
 	// Event Handling...
 	g_ptr2eventHandlingFunction = NULL_PTR;
 }
@@ -252,10 +293,12 @@ void SYSTEM_openGate(void)
 {
 	SERVO_init();
 	SERVO_setAngle(90);
+	g_last_gate_state = GATE_OPEN;
 }
 
 void SYSTEM_closeGate(void)
 {
 	SERVO_init();
 	SERVO_setAngle(0);
+	g_last_gate_state = GATE_CLOSED;
 }
