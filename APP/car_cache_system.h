@@ -44,6 +44,8 @@ Description  : Vertical Rotary Car Parking System.
 #define PARKING_ASSISTANT_RED_LED_PIN_ID         (PIN7_ID)
 #define PARKING_ASSISTANT_GREEN_LED_PIN_ID       (PIN6_ID)
 #define PARKING_ASSISTANT_SAFE_DISTANCE          (10)
+#define DISTANCE_FROM_SENSOR_TO_GATE             (10)
+#define WAITING_TIME_TO_CLOSE_GATE               (5)
 
 /*===========================================================================================================
                                        < Shared Global Variables >

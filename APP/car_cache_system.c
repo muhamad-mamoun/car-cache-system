@@ -24,11 +24,11 @@ static volatile void (*g_ptr2eventHandlingFunction)(void) = NULL_PTR;
 uint8 g_timer_minutes_counter = 0;
 uint64 g_steps_to_home = 0;
 SYSTEM_parkingSpaceDataType g_parking_spaces[SYSTEM_PARKING_SPACES] = {{1,12689,0,CLOCKWISE,EMPTY_SPACE},
-		                                                           {2,0,0,COUNTERCLOCKWISE,EMPTY_SPACE},
-									                         	   {3,0,0,CLOCKWISE,EMPTY_SPACE},
-											                       {4,0,0,COUNTERCLOCKWISE,EMPTY_SPACE},
-											                       {5,0,0,CLOCKWISE,EMPTY_SPACE},
-											                       {6,0,0,COUNTERCLOCKWISE,EMPTY_SPACE}};
+		                                                               {2,0,0,COUNTERCLOCKWISE,EMPTY_SPACE},
+									                           	       {3,0,0,CLOCKWISE,EMPTY_SPACE},
+											                           {4,0,0,COUNTERCLOCKWISE,EMPTY_SPACE},
+											                           {5,0,0,CLOCKWISE,EMPTY_SPACE},
+											                           {6,0,0,COUNTERCLOCKWISE,EMPTY_SPACE}};
 
 SYSTEM_returnHomeDataType g_way_to_home = {0,0,CLOCKWISE};
 
@@ -98,6 +98,11 @@ void SYSTEM_init(void)
 	ENABLE_GLOBAL_INT();
 }
 
+void SYSTEM_timingOperations(void)
+{
+	g_timer_minutes_counter++;
+}
+
 void SYSTEM_retrieveParkingSpaceData(void)
 {
 	for(uint8 counter = 0; counter < SYSTEM_PARKING_SPACES; counter++)
@@ -134,14 +139,15 @@ void SYSTEM_enterCar(void)
 		// No available spaces
 		LCD_clearScrean();
 		LCD_displayStringRowColumn("Car-Cache System",0,2);
-		LCD_displayStringRowColumn("Sorry!",2,7);
+		LCD_displayStringRowColumn("We Are Sorry",2,4);
 		LCD_displayStringRowColumn("No Empty Spaces!",3,2);
 	}
 	else
 	{
 		LCD_clearScrean();
 		LCD_displayStringRowColumn("Car-Cache System",0,2);
-		LCD_displayStringRowColumn("Wait for your space.",2,0);
+		LCD_displayStringRowColumn("The Space Is Landing",2,0);
+		LCD_displayStringRowColumn("Please Wait...",2,3);
 		// 1- rotate motor
 		SYSTEM_rotateGarage(parking_space_id);
 
@@ -159,13 +165,18 @@ void SYSTEM_enterCar(void)
 		while(IR_checkState() == IR_RECEIVING);
 		// 5- waiting min, close the gate, and return home
 		TIMER0_CTC_init(a_ptr2configurations);
-		TIMER0_setCallBack(a_ptr2callbackfunc);
+		TIMER0_setCallBack(SYSTEM_timingOperations);
 
 		SYSTEM_closeGate();
 		// 6- update space data (array & EEPROM)
 		SYSTEM_updateparkingSpaceData(parking_space_id,BUSY_SPACE);
 		(g_parking_spaces + parking_space_id - 1)->available_flag = BUSY_SPACE;
 	}
+
+	LCD_clearScrean();
+	LCD_displayStringRowColumn("Car-Cache System",0,2);
+	LCD_displayStringRowColumn("» Enter a car.",2,0);
+	LCD_displayStringRowColumn("» Retrieve a car.",3,0);
 	g_ptr2eventHandlingFunction = NULL_PTR;
 }
 
@@ -211,6 +222,23 @@ void SYSTEM_parkingAssistant(void)
 	LED_on(PARKING_ASSISTANT_LEDS_PORT_ID,PARKING_ASSISTANT_GREEN_LED_PIN_ID);
 }
 
+void SYSTEM_checkUserExit(void)
+{
+	TIMER0_CTC_configurationsType TIMER0_configurations = {};
+	TIMER0_setCallBack(SYSTEM_timingOperations);
+	TIMER0_CTC_init(&TIMER0_configurations);
+	g_timer_minutes_counter = 0;
+
+	while(((ULTRASONIC_readDistance() < DISTANCE_FROM_SENSOR_TO_GATE)\
+		 ||(g_timer_minutes_counter < WAITING_TIME_TO_CLOSE_GATE))\
+		 &&(g_last_gate_state == GATE_OPEN));
+
+	if(g_last_gate_state == GATE_OPEN)
+	{
+		SYSTEM_closeGate();
+	}
+}
+
 void SYSTEM_setRetrieveCarEvent(void)
 {
 	/* Set the Retrieve Car event as the current event. */
@@ -252,6 +280,11 @@ void SYSTEM_retrieveCar(void)
 		SYSTEM_updateparkingSpaceData(parking_space_id,EMPTY_SPACE);
 		(g_parking_spaces + parking_space_id - 1)->available_flag = EMPTY_SPACE;
 	}
+
+	LCD_clearScrean();
+	LCD_displayStringRowColumn("Car-Cache System",0,2);
+	LCD_displayStringRowColumn("» Enter a car.",2,0);
+	LCD_displayStringRowColumn("» Retrieve a car.",3,0);
 	g_ptr2eventHandlingFunction = NULL_PTR;
 }
 
@@ -286,6 +319,11 @@ void SYSTEM_returnHome(void)
 	STEPPER_rotate(g_way_to_home.direction_to_gate ^ 1,g_way_to_home.steps_to_gate);
 
 	// Event Handling...
+
+	LCD_clearScrean();
+	LCD_displayStringRowColumn("Car-Cache System",0,2);
+	LCD_displayStringRowColumn("» Enter a car.",2,0);
+	LCD_displayStringRowColumn("» Retrieve a car.",3,0);
 	g_ptr2eventHandlingFunction = NULL_PTR;
 }
 
