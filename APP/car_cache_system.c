@@ -23,6 +23,7 @@ SYSTEM_gateStateType g_last_gate_state = GATE_CLOSED;
 static volatile void (*g_ptr2eventHandlingFunction)(void) = NULL_PTR;
 uint8 g_timer_minutes_counter = 0;
 uint64 g_steps_to_home = 0;
+uint8 g_landed_space_id = 0;
 SYSTEM_parkingSpaceDataType g_parking_spaces[SYSTEM_PARKING_SPACES] = {{1,12689,0,CLOCKWISE,EMPTY_SPACE},
 		                                                               {2,0,0,COUNTERCLOCKWISE,EMPTY_SPACE},
 									                           	       {3,0,0,CLOCKWISE,EMPTY_SPACE},
@@ -30,7 +31,7 @@ SYSTEM_parkingSpaceDataType g_parking_spaces[SYSTEM_PARKING_SPACES] = {{1,12689,
 											                           {5,0,0,CLOCKWISE,EMPTY_SPACE},
 											                           {6,0,0,COUNTERCLOCKWISE,EMPTY_SPACE}};
 
-SYSTEM_returnHomeDataType g_way_to_home = {0,0,CLOCKWISE};
+//SYSTEM_returnHomeDataType g_way_to_home = {0,CLOCKWISE};
 
 
 /*===========================================================================================================
@@ -98,9 +99,14 @@ void SYSTEM_init(void)
 	ENABLE_GLOBAL_INT();
 }
 
-void SYSTEM_timingOperations(void)
+void SystemTimeOperation(void)
 {
 	g_timer_minutes_counter++;
+}
+
+void SYSTEM_alarmOperations(void)
+{
+
 }
 
 void SYSTEM_retrieveParkingSpaceData(void)
@@ -136,11 +142,11 @@ void SYSTEM_enterCar(void)
 	parking_space_id = SYSTEM_findEmptyParkingSpace();
 	if(parking_space_id == 0)
 	{
-		// No available spaces
 		LCD_clearScrean();
 		LCD_displayStringRowColumn("Car-Cache System",0,2);
 		LCD_displayStringRowColumn("We Are Sorry",2,4);
 		LCD_displayStringRowColumn("No Empty Spaces!",3,2);
+		_delay_ms(4000);
 	}
 	else
 	{
@@ -149,7 +155,7 @@ void SYSTEM_enterCar(void)
 		LCD_displayStringRowColumn("The Space Is Landing",2,0);
 		LCD_displayStringRowColumn("Please Wait...",2,3);
 		// 1- rotate motor
-		SYSTEM_rotateGarage(parking_space_id);
+		SYSTEM_rotateGarage(SPACE_DOWN,parking_space_id);
 
 		LCD_clearScrean();
 		LCD_displayStringRowColumn("Car-Cache System",0,2);
@@ -164,8 +170,8 @@ void SYSTEM_enterCar(void)
 		_delay_ms(100);
 		while(IR_checkState() == IR_RECEIVING);
 		// 5- waiting min, close the gate, and return home
-		TIMER0_CTC_init(a_ptr2configurations);
-		TIMER0_setCallBack(SYSTEM_timingOperations);
+//		TIMER0_CTC_init(a_ptr2configurations);
+//		TIMER0_setCallBack(SYSTEM_timingOperations);
 
 		SYSTEM_closeGate();
 		// 6- update space data (array & EEPROM)
@@ -194,14 +200,21 @@ uint8 SYSTEM_findEmptyParkingSpace(void)
 	return parking_space_id;
 }
 
-void SYSTEM_rotateGarage(uint8 a_space_id)
+void SYSTEM_rotateGarage(SYSTEM_garageRotationStateType a_garage_rotation_state, uint8 a_space_id)
 {
-	uint64 rotation_steps = *(g_parking_spaces + a_space_id - 1)->steps_to_gate;
-	STEPPER_directionType rotation_direction = *(g_parking_spaces + a_space_id - 1)->direction_to_gate;
+	uint64 rotation_steps;
+	STEPPER_directionType rotation_direction;
 
-	DISABLE_GLOBAL_INT();
-	STEPPER_rotate(rotation_direction,rotation_steps);
-	ENABLE_GLOBAL_INT();
+	if(a_space_id != 0)
+	{
+		rotation_steps = (g_parking_spaces + a_space_id - 1)->steps_to_gate;
+		rotation_direction = (g_parking_spaces + a_space_id - 1)->direction_to_gate;
+		if(a_garage_rotation_state == SPACE_UP) rotation_direction ^= 1;
+
+		DISABLE_GLOBAL_INT();
+		STEPPER_rotate(rotation_direction,rotation_steps);
+		ENABLE_GLOBAL_INT();
+	}
 }
 
 void SYSTEM_parkingAssistant(void)
@@ -225,7 +238,7 @@ void SYSTEM_parkingAssistant(void)
 void SYSTEM_checkUserExit(void)
 {
 	TIMER0_CTC_configurationsType TIMER0_configurations = {};
-	TIMER0_setCallBack(SYSTEM_timingOperations);
+	TIMER0_setCallBack(SystemTimeOperation);
 	TIMER0_CTC_init(&TIMER0_configurations);
 	g_timer_minutes_counter = 0;
 
@@ -259,18 +272,32 @@ void SYSTEM_retrieveCar(void)
 	// Event Handling...
 	// 1- get card id
 	// user interface message here ...
+	LCD_clearScrean();
+	LCD_displayStringRowColumn("Car-Cache System",0,2);
+	LCD_displayStringRowColumn("Scan Your Card",2,3);
+	LCD_displayStringRowColumn("«« HERE ««",3,5);
+
+	// use function time-out here ...
 	scanned_card_id = RFID_readCard();
-	// user interface message here ...
+	LCD_displayStringRowColumn("Card ID: ",2,3);
+	LCD_displayInteger(scanned_card_id);
+
 	// 2- search for this id
 	parking_space_id = SYSTEM_findThisParkingSpace(scanned_card_id);
 	if(parking_space_id == 0)
 	{
 		// user interface message here ...
+		LCD_displayStringRowColumn("ACCESS DENIED!",3,3);
+		_delay_ms(4000);
+		// turn on buzzer and red led
+		// counter here to activate the buzzer alarm (3 times).
 	}
 	else
 	{
+		LCD_displayStringRowColumn("ACCESS GRANTED",3,3);
+		// turn on green led
 		// 3- rotate motor
-		SYSTEM_rotateGarage(parking_space_id);
+		SYSTEM_rotateGarage(SPACE_DOWN,parking_space_id);
 		// 4- open gate
 		SYSTEM_openGate();
 		// 5- ultrasonic and timer to close the gate
@@ -279,6 +306,7 @@ void SYSTEM_retrieveCar(void)
 		// 6- go to home position
 		SYSTEM_updateparkingSpaceData(parking_space_id,EMPTY_SPACE);
 		(g_parking_spaces + parking_space_id - 1)->available_flag = EMPTY_SPACE;
+		// zeroing the counter here (3 times).
 	}
 
 	LCD_clearScrean();
@@ -310,15 +338,12 @@ void SYSTEM_setReturnHomeEvent(void)
 
 void SYSTEM_returnHome(void)
 {
-	// assure that the gate is closed.
 	if(g_last_gate_state == GATE_OPEN)
 	{
 		SYSTEM_closeGate();
 	}
-	// reminder : you toggled the direction here ..
-	STEPPER_rotate(g_way_to_home.direction_to_gate ^ 1,g_way_to_home.steps_to_gate);
 
-	// Event Handling...
+	SYSTEM_rotateGarage(SPACE_UP,g_landed_space_id);
 
 	LCD_clearScrean();
 	LCD_displayStringRowColumn("Car-Cache System",0,2);

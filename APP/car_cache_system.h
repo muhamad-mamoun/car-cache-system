@@ -76,12 +76,10 @@ typedef struct
 	SYSTEM_parkingSpaceStateType available_flag;
 }SYSTEM_parkingSpaceDataType;
 
-typedef struct
+typedef enum
 {
-	uint8 space_id;
-	uint64 steps_to_gate;
-	STEPPER_directionType direction_to_gate;
-}SYSTEM_returnHomeDataType;
+	SPACE_DOWN,SPACE_UP
+}SYSTEM_garageRotationStateType;
 
 /*===========================================================================================================
                                          < Function-like Macros >
