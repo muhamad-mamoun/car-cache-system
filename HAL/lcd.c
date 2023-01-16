@@ -247,6 +247,24 @@ void LCD_displayHEX(uint8 a_decimal_byte)
 }
 
 /*===========================================================================================================
+ * [Function Name] : LCD_clearRow
+ * [Description]   : Clear a specific row on the screen of the LCD.
+ * [Arguments]     : <a_row>         -> Indicates to the number of the specific row.
+ * [return]        : The function returns void.
+ ==========================================================================================================*/
+void LCD_clearRow(uint8 a_row)
+{
+	if(LCD_NUM_OF_COLUMNS == 16)
+	{
+		LCD_displayStringRowColumn("                ",a_row,0);
+	}
+	else if(LCD_NUM_OF_COLUMNS == 20)
+	{
+		LCD_displayStringRowColumn("                    ",a_row,0);
+	}
+}
+
+/*===========================================================================================================
  * [Function Name] : LCD_clearScrean
  * [Description]   : Clear the screen of the LCD.
  *                   Also this function deletes the DDRAM of the LCD.

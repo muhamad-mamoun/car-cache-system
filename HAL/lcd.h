@@ -164,6 +164,15 @@ void LCD_displayHEX(uint8 a_decimal_byte);
 
 
 /*===========================================================================================================
+ * [Function Name] : LCD_clearRow
+ * [Description]   : Clear a specific row on the screen of the LCD.
+ * [Arguments]     : <a_row>         -> Indicates to the number of the specific row.
+ * [return]        : The function returns void.
+ ==========================================================================================================*/
+void LCD_clearRow(uint8 a_row);
+
+
+/*===========================================================================================================
  * [Function Name] : LCD_clearScrean
  * [Description]   : Clear the screen of the LCD.
  *                   Also this function deletes the DDRAM of the LCD.
