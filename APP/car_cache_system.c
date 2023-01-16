@@ -173,7 +173,7 @@ void EnterCarEvent(void)
 		SYSTEM_closeGate();
 		// 6- update space data (array & EEPROM)
 		SYSTEM_updateparkingSpaceData(parking_space_id,BUSY_SPACE);
-		(g_parking_spaces_data + parking_space_id - 1)->available_flag = BUSY_SPACE;
+		(g_parking_spaces_data + parking_space_id - 1)->busy_parking_space_flag = BUSY_SPACE;
 	}
 
 	LCD_clearScrean();
@@ -183,7 +183,7 @@ void EnterCarEvent(void)
 	g_ptr2eventHandlingFunction = NULL_PTR;
 }
 
-void ActivateRetrieveCarEvent(void)
+void ActivateRetrieveCarEvent(void)  // DONE
 {
 	/* Set the Retrieve Car event as the current event. */
 	g_ptr2eventHandlingFunction = RetrieveCarEvent;
@@ -236,7 +236,7 @@ void RetrieveCarEvent(void)
 		SYSTEM_closeGate();
 		// 6- go to home position
 		SYSTEM_updateparkingSpaceData(parking_space_id,EMPTY_SPACE);
-		(g_parking_spaces + parking_space_id - 1)->available_flag = EMPTY_SPACE;
+		(g_parking_spaces_data + parking_space_id - 1)->busy_parking_space_flag = EMPTY_SPACE;
 		// zeroing the counter here (3 times).
 	}
 
@@ -247,7 +247,7 @@ void RetrieveCarEvent(void)
 	g_ptr2eventHandlingFunction = NULL_PTR;
 }
 
-void ActivateReturnHomeEvent(void)
+void ActivateReturnHomeEvent(void)  // DONE
 {
 	/* Set the Return Home event as the current event. */
 	g_ptr2eventHandlingFunction = ReturnHomeEvent;
@@ -290,8 +290,8 @@ void SYSTEM_rotateGarage(SYSTEM_garageRotationStateType a_garage_rotation_state,
 
 	if(a_space_id != 0)
 	{
-		rotation_steps = (g_parking_spaces + a_space_id - 1)->steps_to_gate;
-		rotation_direction = (g_parking_spaces + a_space_id - 1)->direction_to_gate;
+		rotation_steps = (g_parking_spaces_data + a_space_id - 1)->steps_to_gate;
+		rotation_direction = (g_parking_spaces_data + a_space_id - 1)->direction_to_gate;
 		if(a_garage_rotation_state == SPACE_UP) rotation_direction ^= 1;
 
 		DISABLE_GLOBAL_INT();
