@@ -40,7 +40,7 @@ Description  : Vertical Rotary Car Parking System.
 #define SYSTEM_PARKING_SPACES                    (6)
 #define PARKING_SPACES_DATA_ADDRESS              (0x000)
 
-#define NO_EMPTY_PARKING_SPACES 0
+#define NULL_PARKING_SPACE_ID           0
 
 #define PARKING_ASSISTANT_LEDS_PORT_ID           (PORTB_ID)
 #define PARKING_ASSISTANT_RED_LED_PIN_ID         (PIN7_ID)
@@ -80,14 +80,14 @@ typedef struct
 
 typedef enum
 {
-	SPACE_DOWN,SPACE_UP
+	ROTATION_TO_GATE,ROTATION_TO_HOME
 }SYSTEM_garageRotationStateType;
 
 /*===========================================================================================================
                                          < Function-like Macros >
 ===========================================================================================================*/
 
-
+#define ClearPreviousMessages() LCD_clearRow(2);LCD_clearRow(3)
 
 /*===========================================================================================================
                                          < Functions Prototypes >
