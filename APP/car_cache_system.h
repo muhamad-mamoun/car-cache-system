@@ -40,6 +40,8 @@ Description  : Vertical Rotary Car Parking System.
 #define SYSTEM_PARKING_SPACES                    (6)
 #define PARKING_SPACES_DATA_ADDRESS              (0x000)
 
+#define NO_EMPTY_PARKING_SPACES 0
+
 #define PARKING_ASSISTANT_LEDS_PORT_ID           (PORTB_ID)
 #define PARKING_ASSISTANT_RED_LED_PIN_ID         (PIN7_ID)
 #define PARKING_ASSISTANT_GREEN_LED_PIN_ID       (PIN6_ID)
@@ -69,11 +71,11 @@ typedef enum
 
 typedef struct
 {
-	uint8 space_id;
+	uint8 parking_space_id;
 	sint32 rfid_card_id;
 	uint64 steps_to_gate;
 	STEPPER_directionType direction_to_gate;
-	SYSTEM_parkingSpaceStateType available_flag;
+	SYSTEM_parkingSpaceStateType busy_parking_space_flag;
 }SYSTEM_parkingSpaceDataType;
 
 typedef enum
