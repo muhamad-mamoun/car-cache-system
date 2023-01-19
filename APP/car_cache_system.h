@@ -52,6 +52,7 @@ Description  : Vertical Rotary Car Parking System.
 #define DISTANCE_FROM_SENSOR_TO_GATE             (10)
 #define WAITING_TIME_TO_CLOSE_GATE               (5)
 #define ALLOWED_NUMBER_OF_DENIED_ACCESSES          (3)
+#define NUMBER_OF_COMPARE_MATCH_PER_SECONDS       (62)
 
 /*===========================================================================================================
                                        < Shared Global Variables >
@@ -86,6 +87,11 @@ typedef enum
 {
 	ROTATION_TO_GATE,ROTATION_TO_HOME
 }SYSTEM_garageRotationStateType;
+
+typedef enum
+{
+	ACCESS_DENIED,ACCESS_GRANTED
+}SYSTEM_AccessStateType;
 
 /*===========================================================================================================
                                          < Function-like Macros >

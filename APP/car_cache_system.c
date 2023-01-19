@@ -23,7 +23,7 @@ uint8 g_timer_compare_match_counter = 0;
 TIMER0_CTC_configurationsType g_TIMER0_configurations = {240,TIMER0_FCPU_1024};
 SYSTEM_gateStateType g_last_gate_state = GATE_CLOSED;
 static volatile void (*g_ptr2eventHandlingFunction)(void) = NULL_PTR;
-uint8 g_timer_seconds_counter = 0;
+uint8 g_system_seconds_counter = 0;
 uint8 g_landed_parking_space_id = NULL_PARKING_SPACE_ID;
 SYSTEM_parkingSpaceDataType g_parking_spaces_data[SYSTEM_PARKING_SPACES] \
                                     = {{1,12689,0,CLOCKWISE,EMPTY_SPACE},
@@ -66,12 +66,13 @@ int main(void)
 
 void SYSTEM_init(void)
 {
+	TIMER0_CTC_configurationsType TIMER0_configurations = {252,TIMER0_FCPU_1024};
 	LCD_init();
 	LCD_displayStringRowColumn("Car-Cache System",0,2);
 	LCD_displayStringRowColumn("Welcome!",2,6);
 
-	TIMER0_CTC_init(a_ptr2configurations);
-	TIMER0_setCallBack(a_ptr2callbackfunc);
+	TIMER0_CTC_init(&TIMER0_configurations);
+	TIMER0_setCallBack(SystemTimeHandling);
 	TIMER0_pause();
 
 	IR_init();
@@ -101,26 +102,23 @@ void SYSTEM_init(void)
 	ENABLE_GLOBAL_INT();
 }
 
-void DisplayLaunchMessage(void)
+void SystemTimeHandling(void)
+{
+	static compare_matches_counter = 0;
+	compare_matches_counter++;
+	if(compare_matches_counter == NUMBER_OF_COMPARE_MATCH_PER_SECONDS)
+	{
+		g_system_seconds_counter++;
+		compare_matches_counter = 0;
+	}
+}
+
+void DisplayLaunchMessage(void)  // DONE
 {
 	LCD_clearScrean();
 	LCD_displayStringRowColumn("Car-Cache System",0,2);
 	LCD_displayStringRowColumn("» Enter a car.",2,0);
 	LCD_displayStringRowColumn("» Retrieve a car.",3,0);
-}
-
-//void SystemTimeOperation(void)
-//{
-//	g_timer_compare_match_counter++;
-//	if(g_timer_compare_match_counter == 65)
-//	{
-//		g_timer_seconds_counter++;
-//	}
-//}
-
-void SYSTEM_alarmOperations(void)
-{
-
 }
 
 void FetchParkingSpacesData(void)  // DONE
@@ -142,10 +140,6 @@ void ActivateInsertCarEvent(void)  // DONE
 	g_ptr2eventHandlingFunction = InsertCarEvent;
 }
 
-
-/*==========================================================================
- * write the function s 1- 2- 3-
- =========================================================================*/
 void InsertCarEvent(void)  // DONE
 {
 	uint8 parking_space_id = FindEmptyParkingSpace();
@@ -168,6 +162,7 @@ void InsertCarEvent(void)  // DONE
 
 		ClearPreviousMessages();
 		LCD_displayStringRowColumn("You Are Welcome.",2,2);
+		LCD_displayStringRowColumn("Take Your Card",3,3);
 
 		OpenGarageGate();
 		ParkingAssistant();
@@ -178,7 +173,7 @@ void InsertCarEvent(void)  // DONE
 		RotateGarage(ROTATION_TO_HOME,g_landed_parking_space_id);
 		g_landed_parking_space_id = NULL_PARKING_SPACE_ID;
 
-		SYSTEM_updateparkingSpaceData(parking_space_id,BUSY_SPACE);
+		UpdateParkingSpaceData(parking_space_id,BUSY_SPACE);
 		(g_parking_spaces_data + parking_space_id - 1)->busy_parking_space_flag = BUSY_SPACE;
 	}
 
@@ -192,42 +187,26 @@ void ActivateRetrieveCarEvent(void)  // DONE
 	g_ptr2eventHandlingFunction = RetrieveCarEvent;
 }
 
-void RetrieveCarEvent(void)
+void RetrieveCarEvent(void)  // DONE
 {
 	uint8 parking_space_id = NULL_PARKING_SPACE_ID;
+	SYSTEM_AccessStateType access_state = ValidateUserAccess(&parking_space_id);
 
-	parking_space_id = ValidateUserAccess();
-
-	if(parking_space_id != NULL_PARKING_SPACE_ID)
+	if(access_state == ACCESS_GRANTED)
 	{
+		RotateGarage(ROTATION_TO_GATE,parking_space_id);
+		g_landed_parking_space_id = parking_space_id;
+		OpenGarageGate();
 
-	}
+		CheckCarExitGarage();
 
-	// 2- search for this id
-	parking_space_id = GetParkingSpaceID(scanned_card_id);
-	if(parking_space_id == NULL_PARKING_SPACE_ID)
-	{
-		// user interface message here ...
-		LCD_displayStringRowColumn("ACCESS DENIED!",3,3);
-		_delay_ms(4000);
-		// turn on buzzer and red led
-		// counter here to activate the buzzer alarm (3 times).
-	}
-	else
-	{
-		LCD_displayStringRowColumn("ACCESS GRANTED",3,3);
-		// turn on green led
-		// 3- rotate motor
-		SYSTEM_rotateGarage(ROTATION_TO_GATE,parking_space_id);
-		// 4- open gate
-		SYSTEM_openGate();
-		// 5- ultrasonic and timer to close the gate
-		// .....
-		SYSTEM_closeGate();
-		// 6- go to home position
-		SYSTEM_updateparkingSpaceData(parking_space_id,EMPTY_SPACE);
+		CloseGarageGate();
+		RotateGarage(ROTATION_TO_HOME,g_landed_parking_space_id);
+		g_landed_parking_space_id = NULL_PARKING_SPACE_ID;
+
+		LED_off(RFID_LEDS_PORT_ID,RFID_GREEN_LED_PIN_ID);
+		UpdateParkingSpaceData(parking_space_id,EMPTY_SPACE);
 		(g_parking_spaces_data + parking_space_id - 1)->busy_parking_space_flag = EMPTY_SPACE;
-		// zeroing the counter here (3 times).
 	}
 
 	DisplayLaunchMessage();
@@ -240,15 +219,12 @@ void ActivateReturnHomeEvent(void)  // DONE
 	g_ptr2eventHandlingFunction = ReturnHomeEvent;
 }
 
-void ReturnHomeEvent(void)
+void ReturnHomeEvent(void)  // DONE
 {
 	ClearPreviousMessages();
 	LCD_displayStringRowColumn("Back To Home",2,4);
 
-	_delay_ms(1000);
 	CloseGarageGate();
-
-	_delay_ms(2000);
 	RotateGarage(ROTATION_TO_HOME,g_landed_parking_space_id);
 	g_landed_parking_space_id = NULL_PARKING_SPACE_ID;
 
@@ -256,28 +232,48 @@ void ReturnHomeEvent(void)
 	g_ptr2eventHandlingFunction = NULL_PTR;
 }
 
-uint8 ValidateUserAccess(void)
+SYSTEM_AccessStateType ValidateUserAccess(uint8* a_parking_space_id_ptr)  // DONE
 {
-	uint8 parking_space_id;
 	uint32 scanned_card_id;
+	SYSTEM_AccessStateType access_state;
 
 	ClearPreviousMessages();
 	LCD_displayStringRowColumn("Scan Your Card",2,3);
 	LCD_displayStringRowColumn("«« HERE ««",3,5);
 
 	scanned_card_id = RFID_readCard();
+
+	ClearPreviousMessages();
 	LCD_displayStringRowColumn("Card ID: ",2,3);
 	LCD_displayInteger(scanned_card_id);
 
-	return parking_space_id;
+	*a_parking_space_id_ptr = GetParkingSpaceID(scanned_card_id);
+
+	if(*a_parking_space_id_ptr == NULL_PARKING_SPACE_ID)
+	{
+		AccessDeniedHandling(scanned_card_id);
+		access_state = ACCESS_DENIED;
+	}
+	else
+	{
+		AccessGrantedHandling();
+		access_state = ACCESS_GRANTED;
+	}
+
+	return access_state;
 }
 
-void AccessGrantedHandling(void)
+void AccessGrantedHandling(void)  // DONE
 {
+	LCD_displayStringRowColumn("ACCESS GRANTED",3,3);
+	LED_on(RFID_LEDS_PORT_ID,RFID_GREEN_LED_PIN_ID);
+	BUZZER_on();
 
+	_delay_ms(1000);
+	BUZZER_off();
 }
 
-void AccessDeniedHandling(uint8 a_scanned_card_id)
+void AccessDeniedHandling(uint8 a_scanned_card_id)  // DONE
 {
 	static uint8 access_denied_counter = 1;
 	static uint8 previous_denied_card_id = 0;
@@ -375,21 +371,18 @@ void CheckUserExit(void)  // DONE
 	while(IR_checkState() == IR_RECEIVING);
 }
 
-void SYSTEM_checkCarExit(void)
+void CheckCarExitGarage(void)
 {
 	TIMER0_CTC_configurationsType TIMER0_configurations = {};
 	TIMER0_setCallBack(SystemTimeOperation);
 	TIMER0_CTC_init(&TIMER0_configurations);
+	ULTRASONIC_init();
+
 	g_timer_minutes_counter = 0;
 
 	while(((ULTRASONIC_readDistance() < DISTANCE_FROM_SENSOR_TO_GATE)\
 		 ||(g_timer_minutes_counter < WAITING_TIME_TO_CLOSE_GATE))\
 		 &&(g_last_gate_state == GATE_OPEN));
-
-	if(g_last_gate_state == GATE_OPEN)
-	{
-		SYSTEM_closeGate();
-	}
 }
 
 uint8 GetParkingSpaceID(uint32 a_card_id)  // DONE
