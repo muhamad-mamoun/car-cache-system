@@ -50,7 +50,7 @@ Description  : Vertical Rotary Car Parking System.
 #define RFID_GREEN_LED_PIN_ID                    (PIN6_ID)
 #define PARKING_ASSISTANT_SAFE_DISTANCE          (10)
 #define DISTANCE_FROM_SENSOR_TO_GATE             (10)
-#define WAITING_TIME_TO_CLOSE_GATE               (5)
+#define WAITING_TIME_TO_CLOSE_GATE               (5000)
 #define ALLOWED_NUMBER_OF_DENIED_ACCESSES          (3)
 #define NUMBER_OF_COMPARE_MATCH_PER_SECONDS       (62)
 
@@ -104,25 +104,49 @@ typedef enum
 ===========================================================================================================*/
 
 
-
-
-
-
 void SYSTEM_init(void);
 
-void SYSTEM_setEnterCarEvent(void);
+void SystemTimeHandling(void);
 
-void SYSTEM_enterCar(void);
+void DisplayLaunchMessage(void);
 
-void SYSTEM_setRetrieveCarEvent(void);
+void FetchParkingSpacesData(void);
 
-void SYSTEM_retrieveCar(void);
+void UpdateParkingSpaceData(uint8 a_parking_space_id, SYSTEM_parkingSpaceStateType a_busy_parking_space_flag);
 
-void SYSTEM_setReturnHomeEvent(void);
+void ActivateInsertCarEvent(void);
 
-void SYSTEM_returnHome(void);
+void InsertCarEvent(void);
 
+void ActivateRetrieveCarEvent(void);
 
+void RetrieveCarEvent(void);
+
+void ActivateReturnHomeEvent(void);
+
+void ReturnHomeEvent(void);
+
+SYSTEM_AccessStateType ValidateUserAccess(uint8* a_parking_space_id_ptr);
+
+void AccessGrantedHandling(void);
+
+void AccessDeniedHandling(uint8 a_scanned_card_id);
+
+uint8 FindEmptyParkingSpace(void);
+
+void RotateGarage(SYSTEM_garageRotationStateType a_garage_rotation_state, uint8 a_parking_space_id);
+
+void ParkingAssistant(void);
+
+void CheckUserExitGarage(void);
+
+void CheckCarExitGarage(void);
+
+uint8 GetParkingSpaceID(uint32 a_card_id);
+
+void OpenGarageGate(void);
+
+void CloseGarageGate(void);
 
 
 

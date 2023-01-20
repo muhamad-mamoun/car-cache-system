@@ -67,6 +67,7 @@ int main(void)
 void SYSTEM_init(void)
 {
 	TIMER0_CTC_configurationsType TIMER0_configurations = {252,TIMER0_FCPU_1024};
+
 	LCD_init();
 	LCD_displayStringRowColumn("Car-Cache System",0,2);
 	LCD_displayStringRowColumn("Welcome!",2,6);
@@ -87,7 +88,7 @@ void SYSTEM_init(void)
 	LED_init(PORTC_ID,PIN7_ID);
 
 	MEEPROM_voidInit();
-	SYSTEM_retrieveParkingSpaceData();
+	FetchParkingSpacesData();
 
 	INT0_init(INT0_RISING_EDGE);
 	INT1_init(INT1_RISING_EDGE);
@@ -166,7 +167,7 @@ void InsertCarEvent(void)  // DONE
 
 		OpenGarageGate();
 		ParkingAssistant();
-		CheckUserExit();
+		CheckUserExitGarage();
 		_delay_ms(5000);
 		CloseGarageGate();
 
@@ -364,25 +365,25 @@ void ParkingAssistant(void)  // DONE *
 	LED_on(PARKING_ASSISTANT_LEDS_PORT_ID,PARKING_ASSISTANT_GREEN_LED_PIN_ID);
 }
 
-void CheckUserExit(void)  // DONE
+void CheckUserExitGarage(void)  // DONE
 {
 	LASER_on();
 	_delay_ms(100);
 	while(IR_checkState() == IR_RECEIVING);
 }
 
-void CheckCarExitGarage(void)
+void CheckCarExitGarage(void) // DONE **
 {
-	TIMER0_CTC_configurationsType TIMER0_configurations = {};
-	TIMER0_setCallBack(SystemTimeOperation);
-	TIMER0_CTC_init(&TIMER0_configurations);
 	ULTRASONIC_init();
 
-	g_timer_minutes_counter = 0;
+	TIMER0_resume();
+	g_system_seconds_counter = 0;
 
-	while(((ULTRASONIC_readDistance() < DISTANCE_FROM_SENSOR_TO_GATE)\
-		 ||(g_timer_minutes_counter < WAITING_TIME_TO_CLOSE_GATE))\
-		 &&(g_last_gate_state == GATE_OPEN));
+	while(ULTRASONIC_readDistance() < DISTANCE_FROM_SENSOR_TO_GATE);
+	while((g_system_seconds_counter < WAITING_TIME_TO_CLOSE_GATE) && (g_last_gate_state == GATE_OPEN));
+
+	TIMER0_pause();
+	g_system_seconds_counter = 0;
 }
 
 uint8 GetParkingSpaceID(uint32 a_card_id)  // DONE
