@@ -19,8 +19,6 @@ Description  : Vertical Rotary Car Parking System.
                                            < Global Variables >
 ===========================================================================================================*/
 
-uint8 g_timer_compare_match_counter = 0;
-TIMER0_CTC_configurationsType g_TIMER0_configurations = {240,TIMER0_FCPU_1024};
 SYSTEM_gateStateType g_last_gate_state = GATE_CLOSED;
 static volatile void (*g_ptr2eventHandlingFunction)(void) = NULL_PTR;
 uint8 g_system_seconds_counter = 0;
@@ -105,7 +103,7 @@ void SYSTEM_init(void)
 
 void SystemTimeHandling(void)
 {
-	static compare_matches_counter = 0;
+	static uint8 compare_matches_counter = 0;
 	compare_matches_counter++;
 	if(compare_matches_counter == NUMBER_OF_COMPARE_MATCH_PER_SECONDS)
 	{
